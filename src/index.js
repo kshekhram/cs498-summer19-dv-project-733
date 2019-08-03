@@ -7,7 +7,7 @@ document.getElementById("app").innerHTML = `
 `;
 
 var data = [4,8,5,10,6];
-d3.select("svg").selectAll("rect").data(data).enter().append()
+d3.select(".chart").selectAll("rect").data(data).enter().append()
    .attr("width", 19)
    .attr("height", function(d){return 10*d;})
    .attr("x", function(d, i){return 20*i;})
