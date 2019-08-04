@@ -56,7 +56,7 @@ export function build_side() {
     .style("height", stage_height + "px");
 }
 
-export function build_scene() {
+function build_scene() {
   //Clear stage first
   document.getElementById("stage").innerHTML = "";
 
@@ -127,7 +127,7 @@ export function build_scene() {
   svg.append("g").call(d3.axisLeft(y));
 }
 
-export function prep_chart_data(csv) {
+function prep_chart_data(csv) {
   //This will give data in following format
   //key : values
   //Key will be country and values will be sum(WorkingPopulation)
@@ -161,7 +161,7 @@ function onNavButtonClick() {
   alert("I am Clicked");
 }
 
-export function test_scene() {
+function test_scene() {
   console.log("test_scene() called");
   var data1 = [4, 8, 5, 10, 6];
   //select the stage element
