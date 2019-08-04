@@ -1,18 +1,35 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-	<title>CS 498 Summer 19 Data Visualization Project(7-3-3)</title>
-	<meta charset="UTF-8" />
+	<title>Top 10 countries by GDP Analysis</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="./src/styles.css">
-	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script type = "text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+	<!--script type = "text/javascript" src="./src/data-handler.js"></script-->
+	<script type = "text/javascript" src="./src/index.js"></script>
 </head>
 
 <body>
-	<div id="app">Test Page!</div>
-	<svg class = "chart" width = 120 height = 500></svg>
-	<script src="./src/index.js">
-	</script>
-</body>
+	<div class="header">
+		<h2>World's Top 10 Ecconomies and Populated Countries</h2>
+	</div>
 
+	<div class="row">
+		<div id= "left" class="column side" style="background-color:#aaa;">
+			<div class = "nav" style="height:500px">
+				<button type="button" onClick = "onNavButtonClick()">Previous</button>
+			</div>
+		</div>
+		<div id = "stage" class="column middle" style="background-color:#bbb;"></div>
+		<div id= "right" class="column side" style="background-color:#ccc;">
+			<div class = "nav" style="height:500px"></div>
+		</div>
+	</div>
+	<!--<script src="./src/index.js"></script>-->
+	<div class="footer">
+		<p>CS498:Summer19:Data Visualization Project(7-3-3)     Built By: Krishna Shekhram(ks32@illinois.edu)     Date : August, 4th, 2019</p>
+	</div>
+</body>
+	
 </html>
