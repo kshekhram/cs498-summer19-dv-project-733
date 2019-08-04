@@ -38,7 +38,7 @@ async function load_data() {
     });
 }
 
-export function build_side() {
+function build_side() {
   //create and style left pannel
   document.getElementById("left").innerHTML = "";
   var left_pannel = d3.select("#left");
