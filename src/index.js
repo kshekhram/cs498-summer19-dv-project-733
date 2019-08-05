@@ -46,7 +46,7 @@ function init_page() {
 async function load_data() {
   console.log("load_data() called");
   await d3
-    .csv("./data/CountriesGDPGrowth.csv")
+    .csv("/data/CountriesGDPGrowth.csv")
     .then(function(csv_data) {
       csv_data.forEach(function(d) {
         d.Year = +d.Year; //Integer
