@@ -23,19 +23,19 @@ function init_page() {
       year: 2014,
       measure: "GDP",
       msg:
-        "India was 10th largest ecconomy in 2014. But it's GDP was growing very fast at the rate of <GDP_GROWTH> %."
+        "India was 10th largest ecconomy in 2014. But it's GDP was growing very fast at the rate of 7.4 %."
     },
     {
       year: 2015,
       measure: "GDP",
       msg:
-        "India became 7th largest ecconomy in 2015, overtaking Italy, Brazil and Russia. it's GDP was still growing  faster at the rate of <GDP_GROWTH> %."
+        "India became 7th largest ecconomy in 2015, overtaking Italy, Brazil and Russia. it's GDP was still growing  faster at the rate of 8 %."
     },
     {
       year: 2017,
       measure: "GDP",
       msg:
-        "India became 5th largest ecconomy in 2017, overtaking  even UK and France. But it's GDP growth softened to <GDP_GROWTH> %."
+        "India became 5th largest ecconomy in 2017, overtaking  even UK and France. But it's GDP growth softened to 7 %."
     }
   ];
 
