@@ -73,6 +73,9 @@ svg:not (:root ) {
 .chart rect {
   fill: dodgerblue;
 }
+.chart rect:hover {
+  fill: darkblue;
+}
 
 .nav {
   background-color: grey;
