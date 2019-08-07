@@ -53,16 +53,6 @@ body {
     width: 100%;
   }
 }
-/*
-#stage {
-  background-color: lightslategrey;
-  border: 10px solid green;
-  padding: 10px;
-}
-svg:not (:root ) {
-  width: 100%;
-  height: auto;
-}*/
 
 .chart {
   background-color: lightcoral;
@@ -77,7 +67,23 @@ svg:not (:root ) {
   fill: darkblue;
 }
 
-.nav {
-  background-color: grey;
-  border: 2px solid black;
+.tooltip {
+  background: #4372d1;
+  border: 0;
+  border-radius: 8px;
+  font-family: Helvetica;
+  font-size: 12px;
+  font-weight: bold;
+  height: 150px;
+  width: 220px;
+  padding: 2px;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+  color: #080101;
+}
+span {
+  color: #680e0e;
 }
