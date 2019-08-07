@@ -44,7 +44,6 @@ function init_page() {
 }
 
 async function load_data() {
-  console.log("load_data() called");
   await d3
     .csv("./data/CountriesGDPGrowth.csv")
     .then(function(csv_data) {
@@ -57,17 +56,12 @@ async function load_data() {
         d.PopulationGrowth = parseFloat(d.PopulationGrowth); //Percentage
         d.WorkingPopulation = parseFloat(d.WorkingPopulation); //Millions
       });
-      console.log("csv data:", csv_data[0]);
-      console.log("before caling scene:");
 
-      //test_scene();
       stories.forEach(function(story) {
-        console.log("laod data year:", story.year, "measure:", story.measure);
         var chart_data = prep_chart_data(csv_data, story.year, story.measure);
-        console.log("chart data:", chart_data[0]);
         build_scene(chart_data, story);
       });
-      //Here build drilldown scene. Start with first latest year and GDP
+      //Here build drilldown scene. Start with latest year and GDP
       var init_story = {
         year: 2018,
         measure: "GDP",
@@ -119,12 +113,19 @@ function build_scene(chart_data, story, drilldown = false) {
     .attr("height", chart_height + margin.top + margin.bottom);
 
   //Add chart lables
-  var char_title = svg
+  var measureLabel = camelCaseToSentenceCase(story.measure);
+  svg
     .append("text")
     .attr("x", chart_width / 2)
     .attr("y", 50)
-    .text(story.year + " " + camelCaseToSentenceCase(story.measure))
+    .text(story.year + " " + measureLabel)
     .style("font-weight", "bold");
+
+  //form tooltop
+  var tooltip = stage
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
   var chart = svg
     .append("g")
@@ -158,6 +159,48 @@ function build_scene(chart_data, story, drilldown = false) {
     })
     .attr("height", function(d) {
       return chart_height - y(d[story.measure]);
+    })
+    .on("mouseover", function(d) {
+      var tooltip_text_template =
+        "{{BOLD_START}}{{MEASURE_NAME}}:{{BOLD_END}}&nbsp;&nbsp;<span>{{MEASURE_VALUE}}</span><br>";
+      var tooltip_html = "";
+
+      //Now add tooltip infor foe ach field in the data
+      for (var key in d) {
+        var mLabel = camelCaseToSentenceCase(key);
+        var mValue = formatNumbers(d[key], key, true);
+        var curr_tooltip_html = tooltip_text_template;
+
+        //If this measure is shown in chart then bold it
+        if (key == story.measure) {
+          curr_tooltip_html = curr_tooltip_html
+            .replace("{{BOLD_START}}", "<strong>")
+            .replace("{{BOLD_END}}", "</strong>");
+        } else {
+          curr_tooltip_html = curr_tooltip_html
+            .replace("{{BOLD_START}}", "")
+            .replace("{{BOLD_END}}", "");
+        }
+        curr_tooltip_html = curr_tooltip_html
+          .replace("{{MEASURE_NAME}}", mLabel)
+          .replace("{{MEASURE_VALUE}}", mValue);
+        tooltip_html = tooltip_html + curr_tooltip_html;
+      }
+
+      tooltip
+        .transition()
+        .duration(200)
+        .style("opacity", 1);
+      tooltip
+        .html(tooltip_html)
+        .style("left", d3.event.layerX + "px")
+        .style("top", d3.event.layerY - 28 + "px");
+    })
+    .on("mouseout", function() {
+      tooltip
+        .transition()
+        .duration(500)
+        .style("opacity", 0);
     });
 
   // add the x Axis
@@ -169,30 +212,7 @@ function build_scene(chart_data, story, drilldown = false) {
   // add the y Axis
   chart.append("g").call(
     d3.axisLeft(y).tickFormat(function(d) {
-      var format = d;
-      switch (story.measure) {
-        case "GDP":
-          format = d / 1000000000000 + " Trillion";
-          break;
-        case "GDPGrowth":
-          format = d + " %";
-          break;
-        case "GDPPerCapitaGrowth":
-          format = d + " %";
-          break;
-        case "TotalPopulation":
-          format = d / 1000000000 + " Billion";
-          break;
-        case "PopulationGrowth":
-          format = d + " %";
-          break;
-        case "WorkingPopulation":
-          format = d / 1000000000 + " Billion";
-          break;
-        default:
-          break;
-      }
-      return format;
+      return formatNumbers(d, story.measure);
     })
   );
 
@@ -228,15 +248,15 @@ function build_scene(chart_data, story, drilldown = false) {
 }
 
 function prep_chart_data(csv, year = 2018, measure = "GDP") {
-  console.log("laod prep_chart_data year:", year, "measure:", measure);
-
   //First filter data for the passed year
   var filtered = csv.filter(function(d) {
     return d.Year == year;
   });
 
-  console.log("laod prep_chart_data filtered:", filtered);
-
+  //As in this we have only 10 countries for each year, so we don't need roll up
+  //as we need to show all the 10 countries.
+  var c_data = filtered;
+  /*
   //This will give data in following format
   //key : values
   //Key will be country and values will be sum(measure). e.g GDP, Population etc.
@@ -257,12 +277,55 @@ function prep_chart_data(csv, year = 2018, measure = "GDP") {
     d.Country = d.key;
     d[measure] = d.value;
   });
+  */
+
   //Sort data ind descending order of measure
   c_data.sort(function(a, b) {
     return b[measure] - a[measure];
   });
 
   return c_data;
+}
+
+function formatNumbers(numVal, measure, roundIt = false) {
+  var format = numVal;
+  var precision = 2;
+  var scaled_val = numVal;
+
+  switch (measure) {
+    case "GDP":
+      scaled_val = numVal / 1000000000000;
+      format =
+        (roundIt ? round(scaled_val, precision) : scaled_val) + " Trillion";
+      break;
+    case "GDPGrowth":
+      format = (roundIt ? round(numVal, precision) : numVal) + " %";
+      break;
+    case "GDPPerCapitaGrowth":
+      format = (roundIt ? round(numVal, precision) : numVal) + " %";
+      break;
+    case "TotalPopulation":
+      scaled_val = numVal / 1000000000;
+      format =
+        (roundIt ? round(scaled_val, precision) : scaled_val) + " Billion";
+      break;
+    case "PopulationGrowth":
+      format = (roundIt ? round(numVal, precision) : numVal) + " %";
+      break;
+    case "WorkingPopulation":
+      scaled_val = numVal / 1000000000;
+      format =
+        (roundIt ? round(scaled_val, precision) : scaled_val) + " Billion";
+      break;
+    default:
+      break;
+  }
+  return format;
+}
+
+function round(value, precision) {
+  var multiplier = Math.pow(10, precision || 0);
+  return Math.round(value * multiplier) / multiplier;
 }
 
 function add_dropdown(csv) {
@@ -366,11 +429,7 @@ function handleSelection(csv, year, measure) {
   build_scene(newData, curr_sel, true);
 }
 
-function onNavButtonClick() {
-  console.log("onNavButtonClick() Called");
-  alert("I am Clicked");
-}
-
+//This function is only for testing
 function test_scene() {
   console.log("test_scene() called");
   var data1 = [4, 8, 5, 10, 6];
